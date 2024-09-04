@@ -41,4 +41,4 @@ def fetch_ltp(symbol, token):
 
 
 # Replace 'RELIANCE-EQ' and '2885' with a valid symbol and token
-fetch_ltp('CIPLA-EQ', '694')
+fetch_ltp('IRFC-EQ', '2029')

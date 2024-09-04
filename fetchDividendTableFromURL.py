@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from tabulate import tabulate
 from datetime import datetime
 
+# Initialize lists to store data
 IssuerCompany, share_symbols, StockCode, Ex_DividendDate, RecordDate, DividendType, DividendAmount, CMP = [], [], [], [], [], [], [], []
 
 # URL to fetch the data from
@@ -15,20 +16,23 @@ headers = {
 
 # Fetch HTML data from the URL
 response = requests.get(url, headers=headers)
-html_table_data = response.text
+response.raise_for_status()  # Raise an error for bad status codes
 
 # Parse HTML table data
-soup = BeautifulSoup(html_table_data, 'html.parser')
+soup = BeautifulSoup(response.text, 'html.parser')
 
 # Find all rows in the table
-rows = soup.find_all('tr')
+table = soup.find('table', class_='table')
+if not table:
+    raise ValueError("Table not found on the page")
 
-for row in rows:
+rows = table.find_all('tr')
+
+for row in rows[1:]:  # Skip the header row
     columns = row.find_all('td')
     if len(columns) >= 8:
         company_name_tag = columns[0].find('a')
         company_name = company_name_tag.get_text(strip=True) if company_name_tag else columns[0].get_text(strip=True)
-        company_name = company_name.replace('$', '')  # Remove the $ symbol
         stock_symbol = columns[1].get_text(strip=True)
         stock_code = columns[2].get_text(strip=True)
         ex_dividend_date = columns[3].get_text(strip=True)
@@ -59,7 +63,7 @@ DividendStatus = []
 current_date = datetime.now().date()
 
 for i in range(len(CMP)):
-    current_price = float(CMP[i])
+    current_price = float(CMP[i].replace(',', ''))  # Remove commas if present
     qty = investment_amount // current_price
 
     try:
@@ -70,11 +74,14 @@ for i in range(len(CMP)):
     invest_amount = qty * current_price
 
     # Determine dividend status
-    ex_date = datetime.strptime(Ex_DividendDate[i], '%b %d, %Y').date()
-    if current_date >= ex_date:
-        status = 'Missed'
-    else:
-        status = 'Active'
+    try:
+        ex_date = datetime.strptime(Ex_DividendDate[i], '%b %d, %Y').date()
+        if current_date >= ex_date:
+            status = 'Missed'
+        else:
+            status = 'Active'
+    except ValueError:
+        status = 'Invalid Date'
 
     Qty.append(qty)
     PotentialDividend.append(f"{potential_dividend:.2f}" if potential_dividend != 'N/A' else potential_dividend)
