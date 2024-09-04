@@ -1,0 +1,204 @@
+{
+  "indices": [
+    {
+      "name": "SENSEX",
+      "symbol": "SENSEX",
+      "token": "99919000"
+    },
+    {
+      "name": "S&P BSE PSU",
+      "symbol": "BSEPSU",
+      "token": "99919001"
+    },
+    {
+      "name": "S&P BSE 100",
+      "symbol": "BSE100",
+      "token": "99919002"
+    },
+    {
+      "name": "S&P BSE 200",
+      "symbol": "BSE200",
+      "token": "99919003"
+    },
+    {
+      "name": "S&P BSE 500",
+      "symbol": "BSE500",
+      "token": "99919004"
+    },
+    {
+      "name": "S&P BSE INFORMATION TECHNOLOGY",
+      "symbol": "BSE IT",
+      "token": "99919005"
+    },
+    {
+      "name": "S&P BSE FAST MOVING CONSUMER GOODS",
+      "symbol": "BSEFMC",
+      "token": "99919006"
+    },
+    {
+      "name": "S&P BSE CAPITAL GOODS",
+      "symbol": "BSE CG",
+      "token": "99919007"
+    },
+    {
+      "name": "S&P BSE CONSUMER DURABLES",
+      "symbol": "BSE CD",
+      "token": "99919008"
+    },
+    {
+      "name": "S&P BSE HEALTHCARE",
+      "symbol": "BSE HC",
+      "token": "99919009"
+    },
+    {
+      "name": "S&P BSE TECK",
+      "symbol": "TECK",
+      "token": "99919011"
+    },
+    {
+      "name": "S&P BSE BANKEX",
+      "symbol": "BANKEX",
+      "token": "99919012"
+    },
+    {
+      "name": "S&P BSE AUTO",
+      "symbol": "AUTO",
+      "token": "99919013"
+    },
+    {
+      "name": "S&P BSE METAL",
+      "symbol": "METAL",
+      "token": "99919014"
+    },
+    {
+      "name": "S&P BSE CPSE",
+      "symbol": "CPSE",
+      "token": "99919015"
+    },
+    {
+      "name": "S&P BSE MIDCAP",
+      "symbol": "MIDCAP",
+      "token": "99919016"
+    },
+    {
+      "name": "S&P BSE SMALLCAP",
+      "symbol": "SMLCAP",
+      "token": "99919017"
+    },
+    {
+      "name": "S&P BSE DOLLEX 30",
+      "symbol": "DOL30",
+      "token": "99919018"
+    },
+    {
+      "name": "S&P BSE DOLLEX 100",
+      "symbol": "DOL100",
+      "token": "99919019"
+    },
+    {
+      "name": "S&P BSE DOLLEX 200",
+      "symbol": "DOL200",
+      "token": "99919020"
+    },
+    {
+      "name": "S&P BSE LARGECAP",
+      "symbol": "LRGCAP",
+      "token": "99919042"
+    },
+    {
+      "name": "S&P BSE MIDCAP SELECT INDEX",
+      "symbol": "MIDSEL",
+      "token": "99919043"
+    },
+    {
+      "name": "S&P BSE SMALLCAP SELECT INDEX",
+      "symbol": "SMLSEL",
+      "token": "99919044"
+    },
+    {
+      "name": "S&P BSE OIL & GAS",
+      "symbol": "OILGAS",
+      "token": "99919051"
+    },
+    {
+      "name": "S&P BSE POWER",
+      "symbol": "POWER",
+      "token": "99919052"
+    },
+    {
+      "name": "S&P BSE REALTY",
+      "symbol": "REALTY",
+      "token": "99919053"
+    },
+    {
+      "name": "S&P BSE IPO",
+      "symbol": "BSEIPO",
+      "token": "99919054"
+    },
+    {
+      "name": "S&P BSE CARBONEX",
+      "symbol": "CARBON",
+      "token": "99919058"
+    },
+    {
+      "name": "S&P BSE SME IPO",
+      "symbol": "SMEIPO",
+      "token": "99919059"
+    },
+    {
+      "name": "S&P BSE INDIA INFRASTRUCTURE INDEX",
+      "symbol": "INFRA",
+      "token": "99919060"
+    },
+    {
+      "name": "S&P BSE GREENEX",
+      "symbol": "GREENX",
+      "token": "99919081"
+    },
+    {
+      "name": "S&P BSE SENSEX 50",
+      "symbol": "SNSX50",
+      "token": "99919082"
+    },
+    {
+      "name": "S&P BSE SENSEX NEXT 50",
+      "symbol": "SNXT50",
+      "token": "99919083"
+    },
+    {
+      "name": "S&P BSE ENERGY",
+      "symbol": "ENERGY",
+      "token": "99919084"
+    },
+    {
+      "name": "S&P BSE FINANCIAL SERVICES",
+      "symbol": "FINSER",
+      "token": "99919085"
+    },
+    {
+      "name": "S&P BSE INDUSTRIALS",
+      "symbol": "INDSTR",
+      "token": "99919086"
+    },
+    {
+      "name": "S&P BSE TELECOM",
+      "symbol": "TELCOM",
+      "token": "99919087"
+    },
+    {
+      "name": "S&P BSE 150 MIDCAP INDEX",
+      "symbol": "MID150",
+      "token": "99919088"
+    },
+    {
+      "name": "S&P BSE 250 LARGEMIDCAP INDEX",
+      "symbol": "LMI250",
+      "token": "99919089"
+    },
+    {
+      "name": "S&P BSE 400 MIDSMALLCAP INDEX",
+      "symbol": "MSL400",
+      "token": "99919090"
+    }
+  ]
+}

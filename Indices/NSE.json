@@ -1,0 +1,289 @@
+{
+  "indices": [
+    {
+      "name": "NIFTY",
+      "symbol": "NIFTY",
+      "token": "99926000"
+    },
+    {
+      "name": "NIFTY GROWSECT 15",
+      "symbol": "NIFTY GROWSECT 15",
+      "token": "99926001"
+    },
+    {
+      "name": "NIFTY50 PR 2X LEV",
+      "symbol": "NIFTY50 PR 2X LEV",
+      "token": "99926002"
+    },
+    {
+      "name": "NIFTY 500",
+      "symbol": "NIFTY 500",
+      "token": "99926004"
+    },
+    {
+      "name": "NIFTY IT",
+      "symbol": "NIFTY IT",
+      "token": "99926008"
+    },
+    {
+      "name": "BANKNIFTY",
+      "symbol": "BANKNIFTY",
+      "token": "99926009"
+    },
+    {
+      "name": "NIFTY MIDCAP 100",
+      "symbol": "NIFTY MIDCAP 100",
+      "token": "99926011"
+    },
+    {
+      "name": "NIFTY 100",
+      "symbol": "NIFTY 100",
+      "token": "99926012"
+    },
+    {
+      "name": "NIFTY NEXT 50",
+      "symbol": "NIFTY NEXT 50",
+      "token": "99926013"
+    },
+    {
+      "name": "NIFTY MIDCAP 50",
+      "symbol": "NIFTY MIDCAP 50",
+      "token": "99926014"
+    },
+    {
+      "name": "HANGSENG BEES-NAV",
+      "symbol": "HANGSENG BEES-NAV",
+      "token": "99926016"
+    },
+    {
+      "name": "INDIA VIX",
+      "symbol": "INDIA VIX",
+      "token": "99926017"
+    },
+    {
+      "name": "NIFTY REALTY",
+      "symbol": "NIFTY REALTY",
+      "token": "99926018"
+    },
+    {
+      "name": "NIFTY INFRA",
+      "symbol": "NIFTY INFRA",
+      "token": "99926019"
+    },
+    {
+      "name": "NIFTY ENERGY",
+      "symbol": "NIFTY ENERGY",
+      "token": "99926020"
+    },
+    {
+      "name": "NIFTY FMCG",
+      "symbol": "NIFTY FMCG",
+      "token": "99926021"
+    },
+    {
+      "name": "NIFTY MNC",
+      "symbol": "NIFTY MNC",
+      "token": "99926022"
+    },
+    {
+      "name": "NIFTY PHARMA",
+      "symbol": "NIFTY PHARMA",
+      "token": "99926023"
+    },
+    {
+      "name": "NIFTY PSE",
+      "symbol": "NIFTY PSE",
+      "token": "99926024"
+    },
+    {
+      "name": "NIFTY PSU BANK",
+      "symbol": "NIFTY PSU BANK",
+      "token": "99926025"
+    },
+    {
+      "name": "NIFTY SERV SECTOR",
+      "symbol": "NIFTY SERV SECTOR",
+      "token": "99926026"
+    },
+    {
+      "name": "NIFTY AUTO",
+      "symbol": "NIFTY AUTO",
+      "token": "99926029"
+    },
+    {
+      "name": "NIFTY METAL",
+      "symbol": "NIFTY METAL",
+      "token": "99926030"
+    },
+    {
+      "name": "NIFTY MEDIA",
+      "symbol": "NIFTY MEDIA",
+      "token": "99926031"
+    },
+    {
+      "name": "NIFTY SMLCAP 100",
+      "symbol": "NIFTY SMLCAP 100",
+      "token": "99926032"
+    },
+    {
+      "name": "NIFTY 200",
+      "symbol": "NIFTY 200",
+      "token": "99926033"
+    },
+    {
+      "name": "NIFTY DIV OPPS 50",
+      "symbol": "NIFTY DIV OPPS 50",
+      "token": "99926034"
+    },
+    {
+      "name": "NIFTY COMMODITIES",
+      "symbol": "NIFTY COMMODITIES",
+      "token": "99926035"
+    },
+    {
+      "name": "NIFTY CONSUMPTION",
+      "symbol": "NIFTY CONSUMPTION",
+      "token": "99926036"
+    },
+    {
+      "name": "FINNIFTY",
+      "symbol": "FINNIFTY",
+      "token": "99926037"
+    },
+    {
+      "name": "NIFTY50 DIV POINT",
+      "symbol": "NIFTY50 DIV POINT",
+      "token": "99926038"
+    },
+    {
+      "name": "NIFTY100 LIQ 15",
+      "symbol": "NIFTY100 LIQ 15",
+      "token": "99926040"
+    },
+    {
+      "name": "NIFTY CPSE",
+      "symbol": "NIFTY CPSE",
+      "token": "99926041"
+    },
+    {
+      "name": "NIFTY50 PR 1X INV",
+      "symbol": "NIFTY50 PR 1X INV",
+      "token": "99926042"
+    },
+    {
+      "name": "NIFTY50 TR 2X LEV",
+      "symbol": "NIFTY50 TR 2X LEV",
+      "token": "99926043"
+    },
+    {
+      "name": "NIFTY50 TR 1X INV",
+      "symbol": "NIFTY50 TR 1X INV",
+      "token": "99926044"
+    },
+    {
+      "name": "NIFTY50 VALUE 20",
+      "symbol": "NIFTY50 VALUE 20",
+      "token": "99926045"
+    },
+    {
+      "name": "NIFTY MID LIQ 15",
+      "symbol": "NIFTY MID LIQ 15",
+      "token": "99926046"
+    },
+    {
+      "name": "NIFTY PVT BANK",
+      "symbol": "NIFTY PVT BANK",
+      "token": "99926047"
+    },
+    {
+      "name": "NIFTY100 QUALTY30",
+      "symbol": "NIFTY100 QUALTY30",
+      "token": "99926048"
+    },
+     {
+      "name": "NIFTY GS 8 13YR",
+      "symbol": "NIFTY GS 8 13YR",
+      "token": "99926049"
+    },
+    {
+      "name": "NIFTY GS 10YR",
+      "symbol": "NIFTY GS 10YR",
+      "token": "99926050"
+    },
+    {
+      "name": "NIFTY GS 10YR CLN",
+      "symbol": "NIFTY GS 10YR CLN",
+      "token": "99926051"
+    },
+    {
+      "name": "NIFTY GS 4 8YR",
+      "symbol": "NIFTY GS 4 8YR",
+      "token": "99926052"
+    },
+    {
+      "name": "NIFTY GS 11 15YR",
+      "symbol": "NIFTY GS 11 15YR",
+      "token": "99926053"
+    },
+    {
+      "name": "NIFTY GS 15YRPLUS",
+      "symbol": "NIFTY GS 15YRPLUS",
+      "token": "99926054"
+    },
+    {
+      "name": "NIFTY GS COMPOSITE",
+      "symbol": "NIFTY GS COMPOSITE",
+      "token": "99926055"
+    },
+    {
+      "name": "NIFTY50 EQL WGT",
+      "symbol": "NIFTY50 EQL WGT",
+      "token": "99926056"
+    },
+    {
+      "name": "NIFTY100 EQL WGT",
+      "symbol": "NIFTY100 EQL WGT",
+      "token": "99926057"
+    },
+    {
+      "name": "NIFTY100 LOWVOL30",
+      "symbol": "NIFTY100 LOWVOL30",
+      "token": "99926058"
+    },
+    {
+      "name": "NIFTY ALPHA 50",
+      "symbol": "NIFTY ALPHA 50",
+      "token": "99926059"
+    },
+    {
+      "name": "NIFTY MIDCAP 150",
+      "symbol": "NIFTY MIDCAP 150",
+      "token": "99926060"
+    },
+    {
+      "name": "NIFTY SMLCAP 50",
+      "symbol": "NIFTY SMLCAP 50",
+      "token": "99926061"
+    },
+    {
+      "name": "NIFTY SMLCAP 250",
+      "symbol": "NIFTY SMLCAP 250",
+      "token": "99926062"
+    },
+    {
+      "name": "NIFTY MIDSML 400",
+      "symbol": "NIFTY MIDSML 400",
+      "token": "99926063"
+    },
+    {
+      "name": "NIFTY200 QUALTY30",
+      "symbol": "NIFTY200 QUALTY30",
+      "token": "99926064"
+    },
+    {
+      "name": "NIFTY MID SELECT",
+      "symbol": "NIFTY MID SELECT",
+      "token": "99926074"
+    }
+  ]
+}

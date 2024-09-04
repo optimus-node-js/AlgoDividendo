@@ -1,0 +1,34 @@
+{
+  "indices": [
+    {
+      "name": "AGRIDEX",
+      "symbol": "AGRIDEX",
+      "token": "99918001"
+    },
+    {
+      "name": "NKRISHI",
+      "symbol": "NKRISHI",
+      "token": "99918002"
+    },
+    {
+      "name": "FREIGHTEX",
+      "symbol": "FREIGHTEX",
+      "token": "99918003"
+    },
+    {
+      "name": "NCDEXRAIN",
+      "symbol": "NCDEXRAIN",
+      "token": "99918004"
+    },
+    {
+      "name": "NCDEXAGRI",
+      "symbol": "NCDEXAGRI",
+      "token": "99918005"
+    },
+    {
+      "name": "FUTEXAGRI",
+      "symbol": "FUTEXAGRI",
+      "token": "99918006"
+    }
+  ]
+}
