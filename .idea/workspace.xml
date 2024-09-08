@@ -4,31 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e25ef1af-f157-49d8-b746-4c5345d6e216" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/AlgoDividend.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AngelOneBrokerageCalculator.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DriverLTP.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DriverOHLC.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FetchDividendWithLTP_API.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Indices/BSE.json" beforeDir="false" afterPath="$PROJECT_DIR$/Indices/BSE.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Indices/MCX.json" beforeDir="false" afterPath="$PROJECT_DIR$/Indices/MCX.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Indices/NCDEX.json" beforeDir="false" afterPath="$PROJECT_DIR$/Indices/NCDEX.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Indices/NSE.json" beforeDir="false" afterPath="$PROJECT_DIR$/Indices/NSE.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fetchDividendTableFromURL.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-06-28/app.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-06-29/app.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-08-27/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/CLI Running Scripts/DriverLTP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-08-28/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/CLI Running Scripts/DriverLTP.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-08-29/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/Param Scripts/DriverLTP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-09-01/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/Param Scripts/DriverOHLC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2024-09-04/app.log" beforeDir="false" />
+    <list default="true" id="ac768b42-df4a-441c-95d9-7a3e7f085fc3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/All Indices with Token Codes (IMP).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/BSE.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/MCX.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/NCDEX.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/NSE.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/OpenAPIScripMaster.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Indices/OpenAPIScripMaster.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2024-09-08/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/2024-09-08/app.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,9 +38,10 @@
   }
 }</component>
   <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
 }</component>
-  <component name="ProjectId" id="2lmIjuoDoROoXzfHmMcWjcNLxzY" />
+  <component name="ProjectId" id="2lmdFaYBZ8Irpd8VENdB6WLPkwA" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -61,15 +49,14 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Python.DriverOHLC.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.DriverLTP.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.DriverOHLC">
-    <configuration name="DriverOHLC" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager">
+    <configuration name="DriverLTP" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AlgoDividend" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -78,33 +65,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Param Scripts" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/AlgoScipts" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Param Scripts/DriverOHLC.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AlgoDividend" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AlgoScipts/DriverLTP.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -115,8 +80,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.DriverOHLC" />
-        <item itemvalue="Python.main" />
+        <item itemvalue="Python.DriverLTP" />
       </list>
     </recent_temporary>
   </component>
@@ -130,11 +94,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="e25ef1af-f157-49d8-b746-4c5345d6e216" name="Changes" comment="" />
-      <created>1725778965831</created>
+      <changelist id="ac768b42-df4a-441c-95d9-7a3e7f085fc3" name="Changes" comment="" />
+      <created>1725789084088</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1725778965831</updated>
+      <updated>1725789084088</updated>
     </task>
     <servers />
   </component>

@@ -3,9 +3,10 @@ from SmartApi.smartConnect import SmartConnect
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
+from pathlib import Path
 
 # Replace with your actual credentials
-username = '***REDACTED***'
+clientcode = '***REDACTED***'
 password = '***REDACTED***'
 apiKey = '***REDACTED***'
 totp_secret = '***REDACTED***'
@@ -15,15 +16,16 @@ app = FastAPI()
 def generate_totp(totp_secret):
     return pyotp.TOTP(totp_secret).now()
 
-def login(apiKey, username, password, totp_secret):
+def login(apiKey, clientcode, password, totp_secret):
     obj = SmartConnect(api_key=apiKey)
     try:
-        data = obj.generateSession(username, password, generate_totp(totp_secret))
+        data = obj.generateSession(clientcode, password, generate_totp(totp_secret))
         return obj, data['data']['refreshToken'], obj.getfeedToken()
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Error during login: {e}")
 
-obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
+obj, refreshToken, feedToken = login(apiKey, clientcode, password, totp_secret)
+
 
 
 
@@ -50,7 +52,6 @@ def fetch_ohlc(symbol: str, token: str, interval: str, from_date: str, to_date: 
         }
 
         data = obj.getCandleData(historical_params)
-
         if data and 'data' in data:
             ohlc_data = data['data']
             ohlc_list = [
@@ -68,6 +69,60 @@ def fetch_ohlc(symbol: str, token: str, interval: str, from_date: str, to_date: 
             raise HTTPException(status_code=404, detail=f"No OHLC data found for {symbol}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get OHLC data for {symbol}: {e}")
+    
+    
+# Fetch User Profile Data
+def fetch_user_profile():
+    try:
+        profile = obj.getProfile(refreshToken)
+        if profile and 'data' in profile:
+            return profile['data']
+        else:
+            raise HTTPException(status_code=404, detail="No profile data found.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching profile data: {e}")
+
+# Fetch Funds Details
+def fetch_funds_details():
+    try:
+        funds = obj.rmsLimit()
+        if funds and 'data' in funds:
+            return funds['data']
+        else:
+            raise HTTPException(status_code=404, detail="No funds data found.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching funds data: {e}")
+    
+    
+# Fetch Holdings
+def fetch_holdings():
+    print("Triggering fetch_holdings")
+    try:
+        holdings = obj.allholding()  # Use allholding instead of getHoldings
+        print("Holdings API Response:", holdings)  # Log the response for debugging
+        if holdings and 'data' in holdings:
+            return holdings['data']
+        else:
+            raise HTTPException(status_code=404, detail="No holdings data found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
+
+# Function to log out the user
+def logout():
+    print("Triggering logout")
+    try:
+        response = obj.terminateSession(clientcode)
+        print("Logout API Response:", response)  # Log response for debugging
+        if response and response['status']:
+            return {"message": "Logged out successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Logout failed.")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error during logout: {e}")    
+    
+    
 
 # Request body models for FastAPI
 class LTPRequest(BaseModel):
@@ -81,6 +136,27 @@ class OHLCRequest(BaseModel):
     from_date: str
     to_date: str
 
+
+
+# Home page route
+@app.get("/", response_class=HTMLResponse)
+async def serve_welcome_template():
+    # Path to your HTML file
+    html_path = Path("welcomeTemplate.html")
+    
+    # Read the HTML file content
+    if html_path.exists():
+        with open(html_path, 'r') as file:
+            html_content = file.read()
+        return HTMLResponse(content=html_content, status_code=200)
+    else:
+        return HTMLResponse(content="Template not found", status_code=404)
+
+
+
+
+
+
 # FastAPI route to get LTP
 @app.post("/get_ltp/")
 async def get_ltp(data: LTPRequest):
@@ -92,135 +168,25 @@ async def get_ohlc(data: OHLCRequest):
     return fetch_ohlc(data.symbol, data.token, data.interval, data.from_date, data.to_date)
 
 
-# Home page route
-@app.get("/", response_class=HTMLResponse)
-async def home():
-    html_content = """
-    <html>
-    <head>
-        <title>Stock Market API</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f5f5f5;
-                margin: 0;
-                padding: 20px;
-            }
-            h1 {
-                color: #333;
-            }
-            h3 {
-                color: #555;
-            }
-            p {
-                font-size: 16px;
-                color: #666;
-            }
-            ul {
-                list-style-type: none;
-                padding: 0;
-            }
-            ul li {
-                padding: 8px 0;
-                font-size: 18px;
-            }
-            code {
-                background-color: #eee;
-                padding: 4px 6px;
-                border-radius: 4px;
-                font-family: "Courier New", Courier, monospace;
-            }
-            pre {
-                background-color: #f0f0f0;
-                padding: 10px;
-                border-left: 4px solid #007bff;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-            .endpoint {
-                background-color: #007bff;
-                color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                display: inline-block;
-                margin-bottom: 10px;
-            }
-            .url {
-                color: #007bff;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Welcome to the Stock Market Data API</h1>
-        <p>This API allows you to fetch real-time stock data such as Last Traded Price (LTP) and OHLC (Open, High, Low, Close) data. Below are the available endpoints and instructions on how to use them.</p>
-        
-        <h3>Available Endpoints:</h3>
-        <ul>
-            <li><span class="endpoint">POST</span> <code class="url">/get_ltp/</code> - Get the Last Traded Price (LTP) of a stock.</li>
-            <li><span class="endpoint">POST</span> <code class="url">/get_ohlc/</code> - Get OHLC data for a stock within a date range.</li>
-        </ul>
 
-        <h3>How to Use:</h3>
 
-        <h4>1. Fetch Last Traded Price (LTP)</h4>
-        <p><strong>Request Type:</strong> POST</p>
-        <p><strong>URL:</strong> <code>http://127.0.0.1:8000/get_ltp/</code></p>
-        <p><strong>Request Body:</strong></p>
-        <pre>
-{
-    "symbol": "IRFC-EQ",
-    "token": "2029"
-}
-        </pre>
-        <p><strong>Response Example:</strong></p>
-        <pre>
-{
-    "symbol": "IRFC-EQ",
-    "ltp": 123.45
-}
-        </pre>
+@app.get("/get_profile/")
+async def get_profile():
+    return fetch_user_profile()
 
-        <h4>2. Fetch OHLC Data</h4>
-        <p><strong>Request Type:</strong> POST</p>
-        <p><strong>URL:</strong> <code>http://127.0.0.1:8000/get_ohlc/</code></p>
-        <p><strong>Request Body:</strong></p>
-        <pre>
-{
-    "symbol": "IRFC-EQ",
-    "token": "2029",
-    "interval": "ONE_DAY",
-    "from_date": "2023-09-01 09:15",
-    "to_date": "2023-09-01 15:30"
-}
-        </pre>
-        <p><strong>Response Example:</strong></p>
-        <pre>
-{
-    "symbol": "IRFC-EQ",
-    "interval": "ONE_DAY",
-    "data": [
-        {
-            "date": "2023-09-01",
-            "open": 120.50,
-            "high": 125.00,
-            "low": 119.75,
-            "close": 123.00
-        },
-        ...
-    ]
-}
-        </pre>
+@app.get("/get_funds/")
+async def get_funds():
+    return fetch_funds_details()
 
-        <h3>Notes:</h3>
-        <ul>
-            <li>Ensure that you replace the <code>symbol</code> and <code>token</code> values with valid stock symbols and tokens.</li>
-            <li>The <code>interval</code> for OHLC can be set to values such as <code>ONE_MINUTE</code>, <code>ONE_DAY</code>, etc.</li>
-            <li>Both endpoints return JSON responses with either the requested data or error details.</li>
-        </ul>
 
-        <h3>Happy Trading!</h3>
-    </body>
-</html>
 
-    """
-    return html_content
+# Route for fetching holdings
+@app.get("/get_holdings/")
+async def get_holdings():
+    return fetch_holdings()
+
+
+# FastAPI route to log out
+@app.get("/logout/")
+async def perform_logout():
+    return logout()
