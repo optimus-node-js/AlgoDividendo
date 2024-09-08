@@ -26,4 +26,23 @@ def login(apiKey, username, password, totp_secret):
 
 obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
 
-print(obj.terminateSession(username))
+holdings = obj.holding()['data']
+summing = []
+for i in holdings:
+    print(summing.append(i['profitandloss']))
+
+print(summing)
+print(sum(summing))
+
+# data = {
+#     "datatype":"PercPriceGainers",
+#     "expirytype":"NEAR"
+# }
+# print(obj.gainersLosers(data))
+
+
+
+#
+# param = { "mode": "FULL", "exchangeTokens": { "NSE": ["3045","881"], "NFO": ["58662"]} }
+# print(obj.getMarketData(param['mode'], param['exchangeTokens']))
+

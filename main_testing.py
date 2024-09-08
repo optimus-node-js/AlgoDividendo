@@ -108,6 +108,38 @@ def fetch_holdings():
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
 
+
+
+
+
+
+# Request model for dynamic stock fetching
+class StockRequest(BaseModel):
+    mode: str
+    exchangeTokens: dict
+
+
+# Fetch stock price in "FULL" mode
+def fetch_full_mode_price(mode: str, exchangeTokens: dict):
+    try:
+        # Fetch the market data using the provided parameters
+        response = obj.getMarketData(mode, exchangeTokens)
+        if response and 'data' in response:
+            return response['data']
+        else:
+            raise HTTPException(status_code=404, detail="No data found for provided tokens.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching market data: {e}")
+
+
+
+
+
+
+
+
+
+
 # Function to log out the user
 def logout():
     print("Triggering logout")
@@ -136,7 +168,10 @@ class OHLCRequest(BaseModel):
     from_date: str
     to_date: str
 
-
+# Request model for dynamic stock fetching
+class StockRequest(BaseModel):
+    mode: str
+    exchangeTokens: dict
 
 # Home page route
 @app.get("/", response_class=HTMLResponse)
@@ -158,16 +193,20 @@ async def serve_welcome_template():
 
 
 # FastAPI route to get LTP
-@app.post("/get_ltp/")
+@app.post("/get_price_ltp/")
 async def get_ltp(data: LTPRequest):
     return fetch_ltp(data.symbol, data.token)
 
 # FastAPI route to get OHLC
-@app.post("/get_ohlc/")
+@app.post("/get_price_ohlc/")
 async def get_ohlc(data: OHLCRequest):
     return fetch_ohlc(data.symbol, data.token, data.interval, data.from_date, data.to_date)
 
 
+# Route to fetch stock price in full mode
+@app.post("/get_price_full/")
+async def get_stock_prices(request: StockRequest):
+    return fetch_full_mode_price(request.mode, request.exchangeTokens)
 
 
 @app.get("/get_profile/")
@@ -184,6 +223,16 @@ async def get_funds():
 @app.get("/get_holdings/")
 async def get_holdings():
     return fetch_holdings()
+
+
+
+
+
+
+
+
+
+
 
 
 # FastAPI route to log out
