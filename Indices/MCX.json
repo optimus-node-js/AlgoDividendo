@@ -1,89 +1,86 @@
+
 {
-  "indices": [
-    {
-      "name": "MCXCRUDEX",
-      "symbol": "MCXCRUDEX",
-      "token": "99920000"
-    },
-    {
-      "name": "MCXCOPRDEX",
-      "symbol": "MCXCOPRDEX",
-      "token": "99920001"
-    },
-    {
-      "name": "MCXSILVDEX",
-      "symbol": "MCXSILVDEX",
-      "token": "99920002"
-    },
-    {
-      "name": "MCXGOLDEX",
-      "symbol": "MCXGOLDEX",
-      "token": "99920003"
-    },
-    {
-      "name": "MCXMETLDEX",
-      "symbol": "MCXMETLDEX",
-      "token": "99920004"
-    },
-    {
-      "name": "MCXBULLDEX",
-      "symbol": "MCXBULLDEX",
-      "token": "99920005"
-    },
-    {
-      "name": "MCXCOMPDEX",
-      "symbol": "MCXCOMPDEX",
-      "token": "99920006"
-    },
-    {
-      "name": "MFGLOBALCI",
-      "symbol": "MFGLOBALCI",
-      "token": "99920007"
-    },
-    {
-      "name": "MCXSAGRI",
-      "symbol": "MCXSAGRI",
-      "token": "99920008"
-    },
-    {
-      "name": "MCXSENERGY",
-      "symbol": "MCXSENERGY",
-      "token": "99920009"
-    },
-    {
-      "name": "MCXSMETAL",
-      "symbol": "MCXSMETAL",
-      "token": "99920010"
-    },
-    {
-      "name": "MCXSCOMDEX",
-      "symbol": "MCXSCOMDEX",
-      "token": "99920011"
-    },
-    {
-      "name": "MCXCOMPOSITE",
-      "symbol": "MCXCOMPOSITE",
-      "token": "99920012"
-    },
-    {
-      "name": "MCXCOMDEX",
-      "symbol": "MCXCOMDEX",
-      "token": "99920013"
-    },
-    {
-      "name": "MCXAGRI",
-      "symbol": "MCXAGRI",
-      "token": "99920014"
-    },
-    {
-      "name": "MCXENERGY",
-      "symbol": "MCXENERGY",
-      "token": "99920015"
-    },
-    {
-      "name": "MCXMETAL",
-      "symbol": "MCXMETAL",
-      "token": "99920016"
-    }
-  ]
+  "name": "MCXCRUDEX",
+  "symbol": "MCXCRUDEX",
+  "token": "99920000"
+}
+{
+  "name": "MCXCOPRDEX",
+  "symbol": "MCXCOPRDEX",
+  "token": "99920001"
+}
+{
+  "name": "MCXSILVDEX",
+  "symbol": "MCXSILVDEX",
+  "token": "99920002"
+}
+{
+  "name": "MCXGOLDEX",
+  "symbol": "MCXGOLDEX",
+  "token": "99920003"
+}
+{
+  "name": "MCXMETLDEX",
+  "symbol": "MCXMETLDEX",
+  "token": "99920004"
+}
+{
+  "name": "MCXBULLDEX",
+  "symbol": "MCXBULLDEX",
+  "token": "99920005"
+}
+{
+  "name": "MCXCOMPDEX",
+  "symbol": "MCXCOMPDEX",
+  "token": "99920006"
+}
+{
+  "name": "MFGLOBALCI",
+  "symbol": "MFGLOBALCI",
+  "token": "99920007"
+}
+{
+  "name": "MCXSAGRI",
+  "symbol": "MCXSAGRI",
+  "token": "99920008"
+}
+{
+  "name": "MCXSENERGY",
+  "symbol": "MCXSENERGY",
+  "token": "99920009"
+}
+{
+  "name": "MCXSMETAL",
+  "symbol": "MCXSMETAL",
+  "token": "99920010"
+}
+{
+  "name": "MCXSCOMDEX",
+  "symbol": "MCXSCOMDEX",
+  "token": "99920011"
+}
+{
+  "name": "MCXCOMPOSITE",
+  "symbol": "MCXCOMPOSITE",
+  "token": "99920012"
+}
+{
+  "name": "MCXCOMDEX",
+  "symbol": "MCXCOMDEX",
+  "token": "99920013"
+}
+{
+  "name": "MCXAGRI",
+  "symbol": "MCXAGRI",
+  "token": "99920014"
+}
+{
+  "name": "MCXENERGY",
+  "symbol": "MCXENERGY",
+  "token": "99920015"
+}
+{
+  "name": "MCXMETAL",
+  "symbol": "MCXMETAL",
+  "token": "99920016"
 }

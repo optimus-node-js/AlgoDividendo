@@ -1,0 +1,226 @@
+import pyotp
+from SmartApi.smartConnect import SmartConnect
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from fastapi.responses import HTMLResponse
+
+# Replace with your actual credentials
+username = '***REDACTED***'
+password = '***REDACTED***'
+apiKey = '***REDACTED***'
+totp_secret = '***REDACTED***'
+
+app = FastAPI()
+
+def generate_totp(totp_secret):
+    return pyotp.TOTP(totp_secret).now()
+
+def login(apiKey, username, password, totp_secret):
+    obj = SmartConnect(api_key=apiKey)
+    try:
+        data = obj.generateSession(username, password, generate_totp(totp_secret))
+        return obj, data['data']['refreshToken'], obj.getfeedToken()
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Error during login: {e}")
+
+obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
+
+
+
+# Fetch LTP for a single symbol
+def fetch_ltp(symbol: str, token: str):
+    try:
+        LTP = obj.ltpData('NSE', symbol, token)
+        if LTP and 'data' in LTP and 'ltp' in LTP['data']:
+            return {"symbol": symbol, "ltp": LTP['data']['ltp']}
+        else:
+            raise HTTPException(status_code=404, detail=f"No LTP data found for {symbol}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get LTP data for {symbol}: {e}")
+
+# Fetch OHLC for a single symbol within a specific date range
+def fetch_ohlc(symbol: str, token: str, interval: str, from_date: str, to_date: str):
+    try:
+        historical_params = {
+            "exchange": "NSE",
+            "symboltoken": token,
+            "interval": interval,
+            "fromdate": from_date,
+            "todate": to_date
+        }
+
+        data = obj.getCandleData(historical_params)
+
+        if data and 'data' in data:
+            ohlc_data = data['data']
+            ohlc_list = [
+                {
+                    "date": ohlc[0],
+                    "open": ohlc[1],
+                    "high": ohlc[2],
+                    "low": ohlc[3],
+                    "close": ohlc[4],
+                }
+                for ohlc in ohlc_data
+            ]
+            return {"symbol": symbol, "interval": interval, "data": ohlc_list}
+        else:
+            raise HTTPException(status_code=404, detail=f"No OHLC data found for {symbol}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get OHLC data for {symbol}: {e}")
+
+# Request body models for FastAPI
+class LTPRequest(BaseModel):
+    symbol: str
+    token: str
+
+class OHLCRequest(BaseModel):
+    symbol: str
+    token: str
+    interval: str
+    from_date: str
+    to_date: str
+
+# FastAPI route to get LTP
+@app.post("/get_ltp/")
+async def get_ltp(data: LTPRequest):
+    return fetch_ltp(data.symbol, data.token)
+
+# FastAPI route to get OHLC
+@app.post("/get_ohlc/")
+async def get_ohlc(data: OHLCRequest):
+    return fetch_ohlc(data.symbol, data.token, data.interval, data.from_date, data.to_date)
+
+
+# Home page route
+@app.get("/", response_class=HTMLResponse)
+async def home():
+    html_content = """
+    <html>
+    <head>
+        <title>Stock Market API</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 20px;
+            }
+            h1 {
+                color: #333;
+            }
+            h3 {
+                color: #555;
+            }
+            p {
+                font-size: 16px;
+                color: #666;
+            }
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            ul li {
+                padding: 8px 0;
+                font-size: 18px;
+            }
+            code {
+                background-color: #eee;
+                padding: 4px 6px;
+                border-radius: 4px;
+                font-family: "Courier New", Courier, monospace;
+            }
+            pre {
+                background-color: #f0f0f0;
+                padding: 10px;
+                border-left: 4px solid #007bff;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            .endpoint {
+                background-color: #007bff;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+            .url {
+                color: #007bff;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Welcome to the Stock Market Data API</h1>
+        <p>This API allows you to fetch real-time stock data such as Last Traded Price (LTP) and OHLC (Open, High, Low, Close) data. Below are the available endpoints and instructions on how to use them.</p>
+        
+        <h3>Available Endpoints:</h3>
+        <ul>
+            <li><span class="endpoint">POST</span> <code class="url">/get_ltp/</code> - Get the Last Traded Price (LTP) of a stock.</li>
+            <li><span class="endpoint">POST</span> <code class="url">/get_ohlc/</code> - Get OHLC data for a stock within a date range.</li>
+        </ul>
+
+        <h3>How to Use:</h3>
+
+        <h4>1. Fetch Last Traded Price (LTP)</h4>
+        <p><strong>Request Type:</strong> POST</p>
+        <p><strong>URL:</strong> <code>http://127.0.0.1:8000/get_ltp/</code></p>
+        <p><strong>Request Body:</strong></p>
+        <pre>
+{
+    "symbol": "IRFC-EQ",
+    "token": "2029"
+}
+        </pre>
+        <p><strong>Response Example:</strong></p>
+        <pre>
+{
+    "symbol": "IRFC-EQ",
+    "ltp": 123.45
+}
+        </pre>
+
+        <h4>2. Fetch OHLC Data</h4>
+        <p><strong>Request Type:</strong> POST</p>
+        <p><strong>URL:</strong> <code>http://127.0.0.1:8000/get_ohlc/</code></p>
+        <p><strong>Request Body:</strong></p>
+        <pre>
+{
+    "symbol": "IRFC-EQ",
+    "token": "2029",
+    "interval": "ONE_DAY",
+    "from_date": "2023-09-01 09:15",
+    "to_date": "2023-09-01 15:30"
+}
+        </pre>
+        <p><strong>Response Example:</strong></p>
+        <pre>
+{
+    "symbol": "IRFC-EQ",
+    "interval": "ONE_DAY",
+    "data": [
+        {
+            "date": "2023-09-01",
+            "open": 120.50,
+            "high": 125.00,
+            "low": 119.75,
+            "close": 123.00
+        },
+        ...
+    ]
+}
+        </pre>
+
+        <h3>Notes:</h3>
+        <ul>
+            <li>Ensure that you replace the <code>symbol</code> and <code>token</code> values with valid stock symbols and tokens.</li>
+            <li>The <code>interval</code> for OHLC can be set to values such as <code>ONE_MINUTE</code>, <code>ONE_DAY</code>, etc.</li>
+            <li>Both endpoints return JSON responses with either the requested data or error details.</li>
+        </ul>
+
+        <h3>Happy Trading!</h3>
+    </body>
+</html>
+
+    """
+    return html_content

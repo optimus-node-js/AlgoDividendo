@@ -7,10 +7,8 @@ password = '***REDACTED***'
 apiKey = '***REDACTED***'
 totp_secret = '***REDACTED***'
 
-
 def generate_totp(totp_secret):
     return pyotp.TOTP(totp_secret).now()
-
 
 def login(apiKey, username, password, totp_secret):
     obj = SmartConnect(api_key=apiKey)
@@ -21,24 +19,26 @@ def login(apiKey, username, password, totp_secret):
         print(f"Error during login: {e}")
         return None, None, None
 
-
 # Function to fetch LTP for a single ticker
 def fetch_ltp(symbol, token):
     obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
 
     if obj is None:
-        print("Failed to login, please check your API credentials.")
-        return
+        return {"error": "Failed to login, please check your API credentials."}
 
     try:
         LTP = obj.ltpData('NSE', symbol, token)
         if LTP and 'data' in LTP and 'ltp' in LTP['data']:
-            print(f"LTP of {symbol}: {LTP['data']['ltp']}")
+            return {"symbol": symbol, "ltp": LTP['data']['ltp']}
         else:
-            print(f"No LTP data found for {symbol}")
+            return {"symbol": symbol, "ltp": None, "error": "No LTP data found."}
     except Exception as e:
-        print(f"Failed to get LTP data for {symbol}: {e}")
+        return {"symbol": symbol, "ltp": None, "error": str(e)}
 
+# New function that accepts parameters directly instead of running inside the script
+def get_ltp(symbol, token):
+    ltp_data = fetch_ltp(symbol, token)
+    return ltp_data
 
-# Replace 'RELIANCE-EQ' and '2885' with a valid symbol and token
-fetch_ltp('IRFC-EQ', '2029')
+ltp_info = get_ltp('IRFC-EQ', '2029')
+print(ltp_info)

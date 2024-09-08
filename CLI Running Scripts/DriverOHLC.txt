@@ -1,0 +1,35 @@
+Make sure to replace the from_date and to_date as needed, and adjust the symbol/token accordingly.
+
+Commands for Each Interval:
+
+1. ONE_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 ONE_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+2. THREE_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 THREE_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+3. FIVE_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 FIVE_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+4. TEN_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 TEN_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+5. FIFTEEN_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 FIFTEEN_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+6. THIRTY_MINUTE:
+
+python DriverOHLC.py CIPLA-EQ 694 THIRTY_MINUTE "2023-09-01 09:15" "2023-09-04 15:30"
+
+7. ONE_HOUR:
+
+python DriverOHLC.py CIPLA-EQ 694 ONE_HOUR "2023-09-01 09:15" "2023-09-04 15:30"
+
+8. ONE_DAY:
+
+python DriverOHLC.py CIPLA-EQ 694 ONE_DAY "2023-09-01 09:15" "2023-09-04 15:30"

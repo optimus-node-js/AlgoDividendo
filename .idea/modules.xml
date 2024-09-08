@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AngelOneBrokerageCalculator.iml" filepath="$PROJECT_DIR$/.idea/AngelOneBrokerageCalculator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AlgoDividend.iml" filepath="$PROJECT_DIR$/.idea/AlgoDividend.iml" />
     </modules>
   </component>
 </project>
