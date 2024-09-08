@@ -94,12 +94,11 @@ def fetch_funds_details():
         raise HTTPException(status_code=500, detail=f"Error fetching funds data: {e}")
     
     
-# Fetch Holdings
-def fetch_holdings():
+# Fetch Holding
+def fetch_holding():
     print("Triggering fetch_holdings")
     try:
-        holdings = obj.allholding()  # Use allholding instead of getHoldings
-        print("Holdings API Response:", holdings)  # Log the response for debugging
+        holdings = obj.holding()  
         if holdings and 'data' in holdings:
             return holdings['data']
         else:
@@ -109,7 +108,19 @@ def fetch_holdings():
         raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
 
 
-
+# Fetch All Holdings
+def fetch_all_holdings():
+    print("Triggering fetch_holdings")
+    try:
+        holdings = obj.allholding()  # Use allholding instead of getHoldings
+        
+        if holdings and 'data' in holdings:
+            return holdings['data']
+        else:
+            raise HTTPException(status_code=404, detail="No holdings data found.")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
 
 
 
@@ -220,12 +231,15 @@ async def get_funds():
 
 
 # Route for fetching holdings
-@app.get("/get_holdings/")
+@app.get("/get_holding/")
 async def get_holdings():
-    return fetch_holdings()
+    return fetch_holding()
 
 
-
+# Route for fetching holdings
+@app.get("/get_all_holding/")
+async def get_holdings():
+    return fetch_all_holdings()
 
 
 

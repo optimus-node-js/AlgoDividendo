@@ -25,14 +25,14 @@ def login(apiKey, username, password, totp_secret):
         raise HTTPException(status_code=401, detail=f"Error during login: {e}")
 
 obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
-
-holdings = obj.holding()['data']
-summing = []
-for i in holdings:
-    print(summing.append(i['profitandloss']))
-
-print(summing)
-print(sum(summing))
+print(obj.allholding())
+# holdings = obj.holding()['data']
+# summing = []
+# for i in holdings:
+#     print(summing.append(i['profitandloss']))
+#
+# print(summing)
+# print(sum(summing))
 
 # data = {
 #     "datatype":"PercPriceGainers",
