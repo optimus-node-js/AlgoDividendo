@@ -1,3 +1,11 @@
-__pycache__
-.idea
-logs
+/__pycache__/
+/.idea/
+/logs/
+/.vscode/
+/*.log
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.DS_Store
+.env
