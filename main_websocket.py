@@ -1,255 +1,137 @@
+import websocket
+import json
 import pyotp
 from SmartApi.smartConnect import SmartConnect
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.responses import HTMLResponse
-from pathlib import Path
+import threading
+import time
+import logging
+
+# Setting up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Replace with your actual credentials
-clientcode = '***REDACTED***'
+username = '***REDACTED***'
 password = '***REDACTED***'
 apiKey = '***REDACTED***'
 totp_secret = '***REDACTED***'
+feed_token = None
+client_code = username
+jwt_token = None
+retry_attempts = 3  # Number of retry attempts if token is invalid
 
-app = FastAPI()
-
+# Function to generate TOTP using pyotp
 def generate_totp(totp_secret):
     return pyotp.TOTP(totp_secret).now()
 
-def login(apiKey, clientcode, password, totp_secret):
+# Function to login using credentials and fetch feed token
+def login(apiKey, username, password, totp_secret):
     obj = SmartConnect(api_key=apiKey)
     try:
-        data = obj.generateSession(clientcode, password, generate_totp(totp_secret))
-        return obj, data['data']['refreshToken'], obj.getfeedToken()
+        logger.info("Logging in...")
+        data = obj.generateSession(username, password, generate_totp(totp_secret))
+        logger.info(f"Session Data: {data}")
+        global feed_token, jwt_token
+        feed_token = obj.getfeedToken()
+        jwt_token = data['data']['jwtToken']
+        logger.info(f"Generated feed token: {feed_token}")
+        return obj, data['data']['refreshToken'], feed_token
     except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Error during login: {e}")
+        logger.error(f"Error during login: {e}")
+        return None, None, None
 
-obj, refreshToken, feedToken = login(apiKey, clientcode, password, totp_secret)
+# WebSocket class for handling real-time LTP data
+class SmartWebSocketV2:
+    def __init__(self, jwt_token, api_key, client_code, feed_token):
+        self.jwt_token = jwt_token
+        self.api_key = api_key
+        self.client_code = client_code
+        self.feed_token = feed_token
+        self.ws = None
 
+    def on_open(self, ws):
+        logger.info("WebSocket connection opened")
+        # Subscribing to stock feed for 'IRFC-EQ' using token '2029'
+        token_list = [
+            {
+                "exchangeType": 1,  # NSE Exchange
+                "tokens": ["2029"]  # IRFC-EQ stock token
+            }
+        ]
+        correlation_id = "abc123"  # Unique ID for this session
+        mode = 1  # Mode to request live data
+        self.subscribe(correlation_id, mode, token_list)
 
+    def on_message(self, ws, message):
+        logger.info(f"Received WebSocket message: {message}")
 
+    def on_error(self, ws, error):
+        logger.error(f"WebSocket error: {error}")
 
-# Fetch LTP for a single symbol
-def fetch_ltp(symbol: str, token: str):
-    try:
-        LTP = obj.ltpData('NSE', symbol, token)
-        if LTP and 'data' in LTP and 'ltp' in LTP['data']:
-            return {"symbol": symbol, "ltp": LTP['data']['ltp']}
-        else:
-            raise HTTPException(status_code=404, detail=f"No LTP data found for {symbol}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get LTP data for {symbol}: {e}")
+    def on_close(self, ws, close_status_code, close_msg):
+        logger.info(f"WebSocket closed with code: {close_status_code}, message: {close_msg}")
 
-# Fetch OHLC for a single symbol within a specific date range
-def fetch_ohlc(symbol: str, token: str, interval: str, from_date: str, to_date: str):
-    try:
-        historical_params = {
-            "exchange": "NSE",
-            "symboltoken": token,
-            "interval": interval,
-            "fromdate": from_date,
-            "todate": to_date
+    def subscribe(self, correlation_id, mode, token_list):
+        # Constructing subscription message
+        subscribe_message = {
+            "action": 1,  # Subscribe
+            "token": self.feed_token,
+            "client_code": self.client_code,
+            "correlation_id": correlation_id,
+            "mode": mode,
+            "token_list": token_list
+        }
+        logger.info(f"Sending subscription message: {subscribe_message}")
+        self.ws.send(json.dumps(subscribe_message))
+
+    def connect(self):
+        websocket_url = "wss://smartapisocket.angelone.in/smart-stream"
+        headers = {
+            'Authorization': f'Bearer {self.jwt_token}',  # Send JWT token in headers
+            'x-api-key': self.api_key,  # API Key header
+            'x-feed-token': self.feed_token  # Feed token in headers
         }
 
-        data = obj.getCandleData(historical_params)
-        if data and 'data' in data:
-            ohlc_data = data['data']
-            ohlc_list = [
-                {
-                    "date": ohlc[0],
-                    "open": ohlc[1],
-                    "high": ohlc[2],
-                    "low": ohlc[3],
-                    "close": ohlc[4],
-                }
-                for ohlc in ohlc_data
-            ]
-            return {"symbol": symbol, "interval": interval, "data": ohlc_list}
+        self.ws = websocket.WebSocketApp(
+            websocket_url,
+            header=[f'{key}: {value}' for key, value in headers.items()],
+            on_open=self.on_open,
+            on_message=self.on_message,
+            on_error=self.on_error,
+            on_close=self.on_close
+        )
+        # Keeping the connection alive with ping_interval
+        wst = threading.Thread(target=self.ws.run_forever, kwargs={"ping_interval": 30})  # Ping every 30 seconds
+        wst.daemon = True
+        wst.start()
+
+    def close(self):
+        if self.ws:
+            self.ws.close()
+
+# Retry function for login and WebSocket connection
+def retry_connection(apiKey, username, password, totp_secret, max_attempts):
+    attempt = 0
+    while attempt < max_attempts:
+        obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
+        if obj and feedToken:
+            # Initialize WebSocket connection for real-time data
+            ws_client = SmartWebSocketV2(jwt_token, apiKey, client_code, feedToken)
+            ws_client.connect()
+            try:
+                while True:
+                    time.sleep(1)  # Keep the script running to listen for WebSocket data
+            except KeyboardInterrupt:
+                ws_client.close()
+                break
         else:
-            raise HTTPException(status_code=404, detail=f"No OHLC data found for {symbol}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get OHLC data for {symbol}: {e}")
-    
-    
-# Fetch User Profile Data
-def fetch_user_profile():
-    try:
-        profile = obj.getProfile(refreshToken)
-        if profile and 'data' in profile:
-            return profile['data']
-        else:
-            raise HTTPException(status_code=404, detail="No profile data found.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching profile data: {e}")
+            attempt += 1
+            logger.info(f"Login failed, retrying... Attempt {attempt}/{max_attempts}")
+            time.sleep(5)  # Wait before retrying
 
-# Fetch Funds Details
-def fetch_funds_details():
-    try:
-        funds = obj.rmsLimit()
-        if funds and 'data' in funds:
-            return funds['data']
-        else:
-            raise HTTPException(status_code=404, detail="No funds data found.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching funds data: {e}")
-    
-    
-# Fetch Holding
-def fetch_holding():
-    print("Triggering fetch_holdings")
-    try:
-        holdings = obj.holding()  
-        if holdings and 'data' in holdings:
-            return holdings['data']
-        else:
-            raise HTTPException(status_code=404, detail="No holdings data found.")
-    except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
+    if attempt == max_attempts:
+        logger.error("Failed to connect after multiple attempts. Please check your credentials.")
 
-
-# Fetch All Holdings
-def fetch_all_holdings():
-    print("Triggering fetch_holdings")
-    try:
-        holdings = obj.allholding()  # Use allholding instead of getHoldings
-        
-        if holdings and 'data' in holdings:
-            return holdings['data']
-        else:
-            raise HTTPException(status_code=404, detail="No holdings data found.")
-    except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching holdings data: {e}")
-
-
-
-# Request model for dynamic stock fetching
-class StockRequest(BaseModel):
-    mode: str
-    exchangeTokens: dict
-
-
-# Fetch stock price in "FULL" mode
-def fetch_full_mode_price(mode: str, exchangeTokens: dict):
-    try:
-        # Fetch the market data using the provided parameters
-        response = obj.getMarketData(mode, exchangeTokens)
-        if response and 'data' in response:
-            return response['data']
-        else:
-            raise HTTPException(status_code=404, detail="No data found for provided tokens.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching market data: {e}")
-
-
-
-
-
-
-
-
-
-
-# Function to log out the user
-def logout():
-    print("Triggering logout")
-    try:
-        response = obj.terminateSession(clientcode)
-        print("Logout API Response:", response)  # Log response for debugging
-        if response and response['status']:
-            return {"message": "Logged out successfully"}
-        else:
-            raise HTTPException(status_code=500, detail="Logout failed.")
-    except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error during logout: {e}")    
-    
-    
-
-# Request body models for FastAPI
-class LTPRequest(BaseModel):
-    symbol: str
-    token: str
-
-class OHLCRequest(BaseModel):
-    symbol: str
-    token: str
-    interval: str
-    from_date: str
-    to_date: str
-
-# Request model for dynamic stock fetching
-class StockRequest(BaseModel):
-    mode: str
-    exchangeTokens: dict
-
-# Home page route
-@app.get("/", response_class=HTMLResponse)
-async def serve_welcome_template():
-    # Path to your HTML file
-    html_path = Path("welcomeTemplate.html")
-    
-    # Read the HTML file content
-    if html_path.exists():
-        with open(html_path, 'r') as file:
-            html_content = file.read()
-        return HTMLResponse(content=html_content, status_code=200)
-    else:
-        return HTMLResponse(content="Template not found", status_code=404)
-
-
-
-
-
-
-# FastAPI route to get LTP
-@app.post("/get_price_ltp/")
-async def get_ltp(data: LTPRequest):
-    return fetch_ltp(data.symbol, data.token)
-
-# FastAPI route to get OHLC
-@app.post("/get_price_ohlc/")
-async def get_ohlc(data: OHLCRequest):
-    return fetch_ohlc(data.symbol, data.token, data.interval, data.from_date, data.to_date)
-
-
-# Route to fetch stock price in full mode
-@app.post("/get_price_full/")
-async def get_stock_prices(request: StockRequest):
-    return fetch_full_mode_price(request.mode, request.exchangeTokens)
-
-
-@app.get("/get_profile/")
-async def get_profile():
-    return fetch_user_profile()
-
-@app.get("/get_funds/")
-async def get_funds():
-    return fetch_funds_details()
-
-
-
-# Route for fetching holdings
-@app.get("/get_holding/")
-async def get_holdings():
-    return fetch_holding()
-
-
-# Route for fetching holdings
-@app.get("/get_all_holding/")
-async def get_holdings():
-    return fetch_all_holdings()
-
-
-
-
-
-
-
-
-
-# FastAPI route to log out
-@app.get("/logout/")
-async def perform_logout():
-    return logout()
+# Main function to start the WebSocket connection with retry logic
+if __name__ == "__main__":
+    retry_connection(apiKey, username, password, totp_secret, retry_attempts)
