@@ -5,6 +5,7 @@ from SmartApi.smartConnect import SmartConnect
 from fastapi import HTTPException
 
 
+
 # Function to generate the TOTP for 2FA
 def generate_totp(totp_secret):
     return pyotp.TOTP(totp_secret).now()
@@ -58,7 +59,7 @@ for credential in credentials:
 
     # Login and fetch portfolio data dynamically
     obj, refreshToken, stock_data, client_name = login_and_fetch_portfolio(apiKey, client_code, password, totp_secret)
-
+    print(stock_data)
     # Get today's date in 'dd-mm-yyyy' format
     today_date = datetime.now().strftime('%d-%m-%Y')
 
