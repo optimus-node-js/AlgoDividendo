@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 from pathlib import Path
-
+from time import sleep
 # Replace with your actual credentials
 username = '***REDACTED***'
 password = '***REDACTED***'
@@ -25,14 +25,23 @@ def login(apiKey, username, password, totp_secret):
         raise HTTPException(status_code=401, detail=f"Error during login: {e}")
 
 obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
-data1 = obj.allholding()['data']['holdings']
-TodaysGain = []
-for data in data1:
-    todayGain = (data['ltp'] - data['close']) * data['quantity']
-    TodaysGain.append(todayGain)
-    print(todayGain)
+print(obj.holding())
+# for i in range(20):
+#     # print(obj.ltpData('NSE', 'IRFC-EQ', 2029))
+#
+#     sleep(1)
 
-print(sum(TodaysGain))
+
+
+# data1 = obj.holding()
+# print(data1)
+# TodaysGain = []
+# for data in data1:
+#     todayGain = (data['ltp'] - data['close']) * data['quantity']
+#     TodaysGain.append(todayGain)
+#     print(todayGain)
+#
+# print(sum(TodaysGain))
 
 
 

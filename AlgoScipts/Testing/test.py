@@ -82,6 +82,7 @@ def fetch_historical_ohlc(symbol, token, interval, from_date, to_date):
 
 
 data1 = obj.allholding()['data']['holdings']
+print(data1)
 TodaysGain = []
 for data in data1:
     fetch_historical_ohlc(data['tradingsymbol'], data['symboltoken'], "ONE_DAY", previousDayDate, todayDayDate)

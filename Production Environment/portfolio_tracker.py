@@ -63,7 +63,7 @@ def fetch_historical_ohlc(obj, symbol, token, from_date, to_date):
             "symboltoken": token,
             "interval": "ONE_DAY",
             "fromdate": from_date,
-            "todate": to_date
+            "todate": '2024-09-15'
         }
         response = obj.getCandleData(historical_params)
         if 'data' in response and len(response['data']) > 0:

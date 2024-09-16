@@ -188,7 +188,7 @@ class StockRequest(BaseModel):
 @app.get("/", response_class=HTMLResponse)
 async def serve_welcome_template():
     # Path to your HTML file
-    html_path = Path("welcomeTemplate.html")
+    html_path = Path("Templates/welcomeTemplate.html")
     
     # Read the HTML file content
     if html_path.exists():
