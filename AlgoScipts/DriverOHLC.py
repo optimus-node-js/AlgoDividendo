@@ -66,7 +66,7 @@ def get_ohlc_data(symbol, token, interval, from_date, to_date):
 
 
 
-ohlc_json = get_ohlc_data('CIPLA-EQ', '694', 'ONE_MINUTE', '2023-09-01 09:15', '2023-09-01 15:30')
+ohlc_json = get_ohlc_data('CIPLA-EQ', '694', 'ONE_DAY', '2023-09-13 09:15', '2023-09-16 15:30')
 print(ohlc_json)
 
 

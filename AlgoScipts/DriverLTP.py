@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from pathlib import Path
 from time import sleep
 # Replace with your actual credentials
+import json
 username = '***REDACTED***'
 password = '***REDACTED***'
 apiKey = '***REDACTED***'
@@ -25,7 +26,8 @@ def login(apiKey, username, password, totp_secret):
         raise HTTPException(status_code=401, detail=f"Error during login: {e}")
 
 obj, refreshToken, feedToken = login(apiKey, username, password, totp_secret)
-print(obj.holding())
+holdings = obj.allholding()['data']["holdings"]
+print(json.dumps(holdings))
 # for i in range(20):
 #     # print(obj.ltpData('NSE', 'IRFC-EQ', 2029))
 #

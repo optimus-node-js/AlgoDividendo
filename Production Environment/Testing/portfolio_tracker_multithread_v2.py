@@ -6,12 +6,13 @@ from SmartApi.smartConnect import SmartConnect
 from fastapi import HTTPException
 import concurrent.futures
 from datetime import datetime, timedelta
+import pytz
 # MongoDB connection
 mongo_uri = "mongodb+srv://SupremeRahul:***REDACTED***@clusternse.wpf8cel.mongodb.net/"
 client = MongoClient(mongo_uri)
 db = client['SmartAPI']
 
-portfolio_collection = db['PortfolioHolding_test']
+portfolio_collection = db['Portfolio_test']
 stocks_collection = db['StockHolding_test']
 credentials_collection = db['Angelone Portfolio Tracking User Credentials']
 
@@ -40,6 +41,9 @@ def login_and_fetch_portfolio(apiKey, username, password, totp_secret):
         raise HTTPException(status_code=401, detail=f"Error during login: {e}")
 
 
+# Define the Indian time zone (IST)
+IST = pytz.timezone('Asia/Kolkata')
+
 # Simulated list of NSE trading holidays fetched from https://www.nseindia.com/resources/exchange-communication-holidays
 TRADING_HOLIDAYS = [
     "2024-03-29",  # Example: Holi
@@ -48,105 +52,85 @@ TRADING_HOLIDAYS = [
     # Add more holidays as needed...
 ]
 
-
 def is_trading_holiday(date):
     """Check if the given date is a trading holiday."""
     return date.strftime("%Y-%m-%d") in TRADING_HOLIDAYS
 
-
 def find_previous_working_day(date):
     """Find the most recent working day by recursively skipping trading holidays and weekends."""
-    while date.weekday() in [
-            5, 6
-    ] or is_trading_holiday(date):  # Saturday=5, Sunday=6
+    while date.weekday() in [5, 6] or is_trading_holiday(date):  # Skip Saturday=5, Sunday=6, and holidays
         date -= timedelta(days=1)
     return date
-
 
 def fetch_dates():
     print("Fetching dates for historical OHLC data...")
 
-    now = datetime.now()
+    # Get the current time in IST
+    now = datetime.now(IST)
     day_of_week = now.weekday()  # Monday is 0, Sunday is 6
     fixed_time_1 = "09:15"
     fixed_time_2 = "15:30"
 
     # Step 1: Check if today is a trading holiday or the weekend
-    if is_trading_holiday(now) or day_of_week in [
-            5, 6
-    ]:  # Trading holiday or weekend (Saturday/Sunday)
-        previous_day = find_previous_working_day(
-            now - timedelta(days=1))  # Find last working day
-        print(
-            f"Today is a non-working day. Previous working day: {previous_day.strftime('%Y-%m-%d')}"
-        )
+    if is_trading_holiday(now) or day_of_week in [5, 6]:  # Trading holiday or weekend (Saturday/Sunday)
+        previous_day = find_previous_working_day(now - timedelta(days=1))  # Find last working day
+        print(f"Today is a non-working day. Previous working day: {previous_day.strftime('%Y-%m-%d')}")
 
-        # No time logic applied here, just fetch two prior working days
+        # Fetch the last two valid trading days
         from_date = find_previous_working_day(previous_day - timedelta(days=1))
         to_date = previous_day
 
     # Step 2: If today is not a holiday or weekend, follow the time-based logic properly
     else:
         # Case 1: Monday before 9:15 AM -> Treat Monday as Friday
-        if day_of_week == 0 and now.time() < datetime.strptime(
-                "09:15", "%H:%M").time():
-            # Treat as Friday, fetch Wednesday and Thursday
-            from_date = now - timedelta(days=5)  # Wednesday
-            to_date = now - timedelta(days=4)  # Thursday
+        if day_of_week == 0 and now.time() < datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Wednesday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Thursday
 
         # Case 2: Monday after 9:15 AM -> Fetch Thursday and Friday
-        elif day_of_week == 0 and now.time() >= datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=4)  # Thursday
-            to_date = now - timedelta(days=3)  # Friday
+        elif day_of_week == 0 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Thursday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Friday
 
         # Case 3: Tuesday before 9:15 AM -> Treat Tuesday as Monday
-        elif day_of_week == 1 and now.time() < datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=4)  # Thursday
-            to_date = now - timedelta(days=3)  # Friday
+        elif day_of_week == 1 and now.time() < datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Thursday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Friday
 
         # Case 4: Tuesday after 9:15 AM -> Fetch Friday and Monday
-        elif day_of_week == 1 and now.time() >= datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=3)  # Friday
-            to_date = now - timedelta(days=1)  # Monday
+        elif day_of_week == 1 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=3))  # Friday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Monday
 
         # Case 5: Wednesday before 9:15 AM -> Treat Wednesday as Tuesday
-        elif day_of_week == 2 and now.time() < datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=3)  # Friday
-            to_date = now - timedelta(days=1)  # Monday
+        elif day_of_week == 2 and now.time() < datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=3))  # Friday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Monday
 
         # Case 6: Wednesday after 9:15 AM -> Fetch Monday and Tuesday
-        elif day_of_week == 2 and now.time() >= datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Monday
-            to_date = now - timedelta(days=1)  # Tuesday
+        elif day_of_week == 2 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Monday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Tuesday
 
         # Case 7: Thursday before 9:15 AM -> Treat Thursday as Wednesday
-        elif day_of_week == 3 and now.time() < datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Monday
-            to_date = now - timedelta(days=1)  # Tuesday
+        elif day_of_week == 3 and now.time() < datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Monday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Tuesday
 
         # Case 8: Thursday after 9:15 AM -> Fetch Tuesday and Wednesday
-        elif day_of_week == 3 and now.time() >= datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Tuesday
-            to_date = now - timedelta(days=1)  # Wednesday
+        elif day_of_week == 3 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Tuesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Wednesday
 
         # Case 9: Friday before 9:15 AM -> Treat Friday as Thursday
-        elif day_of_week == 4 and now.time() < datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Tuesday
-            to_date = now - timedelta(days=1)  # Wednesday
+        elif day_of_week == 4 and now.time() < datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Tuesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Wednesday
 
         # Case 10: Friday after 9:15 AM -> Fetch Wednesday and Thursday
-        elif day_of_week == 4 and now.time() >= datetime.strptime(
-                "09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Wednesday
-            to_date = now - timedelta(days=1)  # Thursday
+        elif day_of_week == 4 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Wednesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Thursday
 
     # Step 3: Apply time logic (market open and close times)
     from_date_str = from_date.strftime("%Y-%m-%d ") + fixed_time_1
@@ -154,6 +138,7 @@ def fetch_dates():
 
     print(f"From date: {from_date_str}, To date: {to_date_str}")
     return [from_date_str, to_date_str]
+
 
 
 # Fetch historical OHLC data with rate limiting and detailed logging
@@ -196,6 +181,25 @@ def fetch_with_backoff(api_call, retries=5, backoff_factor=1):
             else:
                 raise e
     raise Exception("Failed after maximum retries")
+# Function to fetch the trade book
+def fetch_trade_book(obj):
+    trade_book = obj.tradeBook()
+    if trade_book['status'] and 'data' in trade_book:
+        return trade_book['data']
+    else:
+        return []  # Return an empty list if there are no trades
+
+
+# Function to check if the stock was bought today
+def is_stock_bought_today(stock, trades):
+    # Check if the stock is in today's trade book with a 'BUY' transaction
+    if not trades:  # Handle case where trade book is empty
+        return False, None, 0
+
+    for trade in trades:
+        if trade['tradingsymbol'] == stock['tradingsymbol'] and trade['transactiontype'] == 'BUY':
+            return True, float(trade['fillprice']), int(trade['fillsize'])
+    return False, None, 0
 
 
 # Update portfolio data with logic to check for duplicates and update instead of appending
@@ -211,6 +215,9 @@ def update_portfolio_data(obj, user_name, client_code):
         holdings_data = allholding_data['data']['holdings']
         total_portfolio_data = allholding_data['data']['totalholding']
         print(f"Holdings fetched: {len(holdings_data)} stocks")
+
+        # Fetch the trade book to cross-reference today's trades
+        trade_book = fetch_trade_book(obj)
     except Exception as e:
         print(f"Error fetching holdings data for {user_name}: {e}")
         return
@@ -220,16 +227,23 @@ def update_portfolio_data(obj, user_name, client_code):
     # Iterate through user's holdings
     for stock in holdings_data:
         print(f"Processing stock: {stock['tradingsymbol']}")
-        prev_close = fetch_historical_ohlc(obj, stock['tradingsymbol'],
-                                           stock['symboltoken'])
+        print(f"Stock Data: {stock}")
+        # Determine if stock was bought today using the trade book
+        bought_today, today_fillprice, today_fillsize = is_stock_bought_today(stock, trade_book)
 
-        if isinstance(prev_close, dict) and 'error' in prev_close:
-            print(
-                f"Skipping stock {stock['tradingsymbol']} due to OHLC fetch error"
-            )
-            continue
+        if bought_today:
+            # Calculate today's gain for the newly bought shares
+            today_gain = (stock['ltp'] - today_fillprice) * today_fillsize
 
-        today_gain = (stock['ltp'] - prev_close) * stock['quantity']
+            # For the remaining quantity, calculate gain using the close price
+            old_quantity = stock['quantity'] - today_fillsize
+            if old_quantity > 0:
+                old_holdings_gain = (stock['ltp'] - stock['close']) * old_quantity
+                today_gain += old_holdings_gain
+        else:
+            # Stock held from previous days, calculate using close price
+            today_gain = (stock['ltp'] - stock['close']) * stock['quantity']
+
         total_today_gain += today_gain
 
         print(f"Today's gain for {stock['tradingsymbol']}: {today_gain}")
@@ -272,7 +286,7 @@ def update_portfolio_data(obj, user_name, client_code):
                             stock['product'],
                             "PortfolioStocks.$.entries.$[elem].averageprice":
                             stock['averageprice'],
-                            "PortfolioStocks.$.entries.$[elem].profitandloss":
+                            "PortfolioStocks.$.entries.$[elem].overallPnL":
                             stock['profitandloss'],
                             "PortfolioStocks.$.entries.$[elem].pnlpercentage":
                             stock['pnlpercentage'],
@@ -301,7 +315,7 @@ def update_portfolio_data(obj, user_name, client_code):
                                 "product": stock['product'],
                                 "averageprice": stock['averageprice'],
                                 "symboltoken": stock['symboltoken'],
-                                "profitandloss": stock['profitandloss'],
+                                "overallPnL": stock['profitandloss'],
                                 "pnlpercentage": stock['pnlpercentage'],
                                 "todayGain": round(today_gain, 2)
                             }
@@ -325,7 +339,7 @@ def update_portfolio_data(obj, user_name, client_code):
                             "product": stock['product'],
                             "averageprice": stock['averageprice'],
                             "symboltoken": stock['symboltoken'],
-                            "profitandloss": stock['profitandloss'],
+                            "overallPnL": stock['profitandloss'],
                             "pnlpercentage": stock['pnlpercentage'],
                             "todayGain": round(today_gain, 2)
                         }]

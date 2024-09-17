@@ -14,8 +14,8 @@ def is_trading_holiday(date):
 
 def find_previous_working_day(date):
     """Find the most recent working day by recursively skipping trading holidays and weekends."""
-    while date.weekday() in [5, 6] or is_trading_holiday(date):  # Saturday=5, Sunday=6
-        date -= timedelta(days=1)
+    while date.weekday() in [5, 6] or is_trading_holiday(date):  # Skip Saturday=5, Sunday=6, and holidays
+        date -= timedelta(days=1)  # Move back one day
     return date
 
 def fetch_dates():
@@ -31,7 +31,7 @@ def fetch_dates():
         previous_day = find_previous_working_day(now - timedelta(days=1))  # Find last working day
         print(f"Today is a non-working day. Previous working day: {previous_day.strftime('%Y-%m-%d')}")
 
-        # No time logic applied here, just fetch two prior working days
+        # Fetch the last two valid trading days
         from_date = find_previous_working_day(previous_day - timedelta(days=1))
         to_date = previous_day
 
@@ -39,54 +39,53 @@ def fetch_dates():
     else:
         # Case 1: Monday before 9:15 AM -> Treat Monday as Friday
         if day_of_week == 0 and now.time() < datetime.strptime("09:15", "%H:%M").time():
-            # Treat as Friday, fetch Wednesday and Thursday
-            from_date = now - timedelta(days=5)  # Wednesday
-            to_date = now - timedelta(days=4)    # Thursday
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Wednesday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Thursday
 
         # Case 2: Monday after 9:15 AM -> Fetch Thursday and Friday
         elif day_of_week == 0 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=4)  # Thursday
-            to_date = now - timedelta(days=3)    # Friday
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Thursday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Friday
 
         # Case 3: Tuesday before 9:15 AM -> Treat Tuesday as Monday
         elif day_of_week == 1 and now.time() < datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=4)  # Thursday
-            to_date = now - timedelta(days=3)    # Friday
+            from_date = find_previous_working_day(now - timedelta(days=4))  # Thursday
+            to_date = find_previous_working_day(now - timedelta(days=3))    # Friday
 
         # Case 4: Tuesday after 9:15 AM -> Fetch Friday and Monday
         elif day_of_week == 1 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=3)  # Friday
-            to_date = now - timedelta(days=1)    # Monday
+            from_date = find_previous_working_day(now - timedelta(days=3))  # Friday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Monday
 
         # Case 5: Wednesday before 9:15 AM -> Treat Wednesday as Tuesday
         elif day_of_week == 2 and now.time() < datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=3)  # Friday
-            to_date = now - timedelta(days=1)    # Monday
+            from_date = find_previous_working_day(now - timedelta(days=3))  # Friday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Monday
 
         # Case 6: Wednesday after 9:15 AM -> Fetch Monday and Tuesday
         elif day_of_week == 2 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Monday
-            to_date = now - timedelta(days=1)    # Tuesday
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Monday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Tuesday
 
         # Case 7: Thursday before 9:15 AM -> Treat Thursday as Wednesday
         elif day_of_week == 3 and now.time() < datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Monday
-            to_date = now - timedelta(days=1)    # Tuesday
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Monday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Tuesday
 
         # Case 8: Thursday after 9:15 AM -> Fetch Tuesday and Wednesday
         elif day_of_week == 3 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Tuesday
-            to_date = now - timedelta(days=1)    # Wednesday
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Tuesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Wednesday
 
         # Case 9: Friday before 9:15 AM -> Treat Friday as Thursday
         elif day_of_week == 4 and now.time() < datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Tuesday
-            to_date = now - timedelta(days=1)    # Wednesday
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Tuesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Wednesday
 
         # Case 10: Friday after 9:15 AM -> Fetch Wednesday and Thursday
         elif day_of_week == 4 and now.time() >= datetime.strptime("09:15", "%H:%M").time():
-            from_date = now - timedelta(days=2)  # Wednesday
-            to_date = now - timedelta(days=1)    # Thursday
+            from_date = find_previous_working_day(now - timedelta(days=2))  # Wednesday
+            to_date = find_previous_working_day(now - timedelta(days=1))    # Thursday
 
     # Step 3: Apply time logic (market open and close times)
     from_date_str = from_date.strftime("%Y-%m-%d ") + fixed_time_1
@@ -97,6 +96,7 @@ def fetch_dates():
 
 # Example of usage
 fetch_dates()
+
 
 
 '''
